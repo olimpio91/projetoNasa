@@ -1,0 +1,90 @@
+from customtkinter import *
+import requests
+
+status = requests.get("https://api-nasa-v2.onrender.com/astronauta")
+response = status.json()
+
+class Application(CTk):
+    def __init__(self):
+        super().__init__()
+        self.config()
+        self.frame()
+        self.widgets()
+
+        self.columnconfigure(0, weight=1)
+        self.rowconfigure((1,2), weight=1)
+    def config(self):
+
+        self.title("Relátorio")
+        self.geometry("400x500")
+        self.minsize(width=300, height=350)
+
+    def widgets(self):
+
+        self.title = CTkLabel(self, text="RELATÓRIO", font=("Roboto", 50))
+        self.option_menu= CTkOptionMenu(self, values=["Dr.man", "Dra.brand","Dra.man"])
+        self.button = CTkButton(self, text="Gerar", command=self.insert)
+
+        self.title.grid(row=0, column=0, pady=20)
+        self.option_menu.grid(row=1, column=0, sticky="s", padx=(0,150),)
+        self.button.grid(row=1, column=0, sticky="s", padx=(150,0))
+
+        self.textbox = CTkTextbox(self, width=350)
+        self.textbox.grid(row=2, column=0, sticky="nsew", padx=10, pady=10)
+
+
+    def insert(self):
+
+
+        if self.option_menu.get() == "Dr.man":
+
+            self.textbox.delete("0.0", END)
+
+            traje = ""
+            traje = ""
+
+            traje = "".join(x for x in response['dr.man_capacete'])
+            traje = traje.split(",")
+
+            traje = "".join(x for x in response['dr.man_traje'])
+            traje = traje.split(",")
+
+            for x in traje:
+                
+                self.textbox.insert("0.0", f"{x}\n\n")
+
+            self.textbox.insert("0.0", "\nCAPACETE  :\n\n")
+
+            for x in traje:
+                self.textbox.insert("0.0", f"{x}\n\n")
+            
+            self.textbox.insert("0.0", "TRAJE  :\n\n")
+
+        elif self.option_menu.get() == "Dra.brand":
+            
+            self.textbox.delete("0.0",END)
+
+            traje = ""
+            traje = "".join(x for x in response['dra.brand_capacete'])
+            traje = traje.split(",")
+
+            for x in traje:
+                self.textbox.insert("0.0", f"{x}\n\n")
+
+            self.textbox.insert("0.0", "CAPACETE  :\n\n")
+        
+        else:
+            
+            self.textbox.delete("0.0",END)
+
+            traje = ""
+            traje = "".join(x for x in response['dra.man_traje'])
+            traje = traje.split(",")
+
+            for x in traje:
+                self.textbox.insert("0.0", f"{x}\n\n")
+
+            self.textbox.insert("0.0", "TRAJE  :\n\n")
+
+run = Application()
+run.mainloop()
